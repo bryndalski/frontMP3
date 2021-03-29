@@ -1,0 +1,5 @@
+{
+    "serverAdress": "http://localhost:5500",
+    "getCovers": "http://localhost:5500/getCovers",
+    "getMusic": "http://localhost:5500/getMusic"
+}

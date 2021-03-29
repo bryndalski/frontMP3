@@ -1,0 +1,31 @@
+.controls {
+  display: flex;
+  width: 50vw;
+  justify-content: space-around;
+  height: 10vh;
+  align-items: center;
+  margin: 0 auto;
+  width: 270px;
+  max-width: 270px;
+  min-width: 270px;
+}
+.controls img {
+  width: 40px;
+  height: 40px;
+}
+
+.playAudio {
+  display: flex;
+  flex-direction: row;
+  justify-content: baseline;
+}
+.playAudio .title {
+  display: inline-block;
+  justify-content: center;
+  align-items: baseline;
+  color: white;
+  font-size: x-large;
+  word-break: keep-all;
+  text-align: center;
+  height: 60%;
+}

@@ -1,0 +1,23 @@
+.coverBarContainer {
+  display: flex;
+  flex-direction: column;
+  width: 40vw;
+  height: 90vh;
+  margin: 0;
+  max-width: 250px;
+  min-width: 200px;
+  overflow: scroll;
+}
+.coverBarContainer img {
+  width: 40vw;
+  height: 40vw;
+  min-width: 200px;
+  min-height: 200px;
+  max-width: 250px;
+  max-height: 250px;
+  margin: 0;
+}
+
+.coverBarContainer::-webkit-scrollbar {
+  display: none;
+}

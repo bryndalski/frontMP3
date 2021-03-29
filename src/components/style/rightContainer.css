@@ -1,0 +1,68 @@
+.rightContainer {
+  height: 90vh;
+  width: 100%;
+}
+.rightContainer h1 {
+  margin: 0;
+  padding: 0;
+  height: 5vh;
+  text-align: center;
+}
+
+.musicContianer {
+  width: 100%;
+  height: 85vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.musicContianer div {
+  overflow: hidden;
+}
+
+.rowContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  min-height: 40px;
+  margin-top: 5px;
+  overflow-y: scroll;
+}
+.rowContainer div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  overflow: hidden;
+}
+.rowContainer div span {
+  display: flex;
+  justify-content: baseline;
+  margin: 5px;
+  overflow: hidden;
+  font-size: 15pt;
+  font-weight: bold;
+  color: #666666;
+  align-self: center;
+}
+.rowContainer div img {
+  visibility: hidden;
+  align-self: center;
+  width: 20px;
+  height: 20px;
+}
+
+.active, .rowContainer:hover {
+  background-color: blue !important;
+}
+.active span, .rowContainer:hover span {
+  color: white !important;
+}
+.active div span:nth-child(2), .rowContainer:hover div span:nth-child(2) {
+  color: black !important;
+}
+.active img, .rowContainer:hover img {
+  visibility: visible !important;
+}
+
+.rowContainer div:nth-child(2) span {
+  color: blue;
+}
