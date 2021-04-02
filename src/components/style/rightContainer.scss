@@ -17,23 +17,22 @@
     overflow-x: hidden;
     overflow-y: scroll;
 
-    div {
-        overflow: hidden;
+    table {
+        width: 100%;
     }
 }
 
 .rowContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+
     min-height: 40px;
     margin-top: 5px;
-    overflow-y: scroll;
 
-    div {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
+    tr {
+        overflow: hidden;
+    }
+
+    th {
+        border: solid 1px black;
         overflow: hidden;
 
         span {
@@ -74,6 +73,12 @@
 
     img {
         visibility: visible !important;
+        filter: invert(100%);
+        -webkit-filter: invert(100%);
+    }
+
+    path {
+        color: white;
     }
 }
 

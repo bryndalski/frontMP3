@@ -1,126 +1,182 @@
 <template>
-     <div class="playAudio">
-        <div class="title">{{songName}}</div>
-        <div class="controls">
-            <div> <img @click="prevTrack" :src="config.serverAdress+`/img/prev.svg`"/> </div>
-            <div> <img @click="playOrPause" :src="playPauseImg"/> </div>
-            <div> <img @click="nextTrack" :src="config.serverAdress+`/img/next.svg`"/> </div>
+  <div class="playAudio">
+    <div class="title">{{ songName }}</div>
+    <div class="controlContainer">
+      <input
+        v-show="widoczny"
+        type="range"
+        :max="maxRange"
+        min="0"
+        :value="currentValue"
+        @input="inputHandler"
+      />
+      <div class="controls">
+        <div>
+          <img
+            @click="prevTrack"
+            :src="config.serverAdress + `/img/prev.svg`"
+          />
         </div>
+        <div>
+          <img
+            v-if="playStatus"
+            @click="playOrPause"
+            :src="config.serverAdress + `/img/pause.svg`"
+          />
+          <img
+            v-else
+            @click="playOrPause"
+            :src="config.serverAdress + `/img/play.svg`"
+          />
+        </div>
+        <div>
+          <img
+            @click="nextTrack"
+            :src="config.serverAdress + `/img/next.svg`"
+          />
+        </div>
+      </div>
     </div>
+
+    <div class="progressInMin">
+      <span>{{ minProgress }}</span>
+    </div>
+  </div>
 </template>
 
 <script>
-import config from "../../config.json"
+import config from "../../config.json";
 
-export default ({
-    name:"playerComponent",
-    props:["audioArray","emitSongNumber","emitSongStatus","songNumber"],
-    data() {
-        return {
-            config:config,
-            plaing:false,
-            playNumber:this.songNumber,
-            currentPlay:null,
-            songName:"Nie wybrano utworu",
-            playPauseImg:`${config.serverAdress}/img/play.svg`
-        }
+export default {
+  name: "playerComponent",
+  computed: {
+    playArray() {
+      //lista utworów
+      return this.$store.getters.getPlayArray;
     },
-    methods: {
-        playOrPause(){
-            if(this.playNumber ==null){
-                this.playNumber = 0
-                this.plaing = false
-                this.$emit("update:emitSongNumber",this.playNumber)
-
-            }
-            if(this.plaing){
-                //pause
-              
-                try {
-                    if(this.currentPlay){
-                    this.currentPlay.pause()
-                    this.plaing=false
-                    this.$emit("update:emitSongStatus",this.plaing)
-                    this.playPauseImg=`${config.serverAdress}/img/play.svg`
-                } 
-                } catch (error) {
-                    console.log("WRUM");
-                }
-
-           }else{
-               try {         
-                if(this.currentPlay){
-                    this.currentPlay.play()
-                    this.plaing=true
-                    this.$emit("update:emitSongStatus",this.plaing)
-                    this.playPauseImg=`${config.serverAdress}/img/pause.svg`
-                }else{
-                    this.playAduio()
-                }
-                } catch (error) {
-                  console.log("hi"); 
-                }
-           }
-        },
-        nextTrack(){
-            if(this.playNumber ==null)
-                this.playNumber = -1
-            if(this.playNumber+1==this.audioArray.length)
-                this.playNumber=0
-            else
-                this.playNumber =  this.playNumber +1
-            this.playAduio()
-            this.$emit("update:emitSongNumber",this.playNumber)
-
-        },
-        playAduio(){
-            try {
-                if(this.currentPlay)
-                    this.currentPlay.pause()
-                this.currentPlay = new Audio(this.audioArray[this.playNumber].source)
-                this.plaing = true,
-                this.currentPlay.play()
-                this.songName=`${this.audioArray[this.playNumber].cover}/${this.audioArray[this.playNumber].name}`
-                this.playPauseImg=`${config.serverAdress}/img/pause.svg`
-                this.currentPlay.addEventListener("ended",()=>{this.nextTrack()})
-            } catch (error) {
-                console.log("error");
-            }
-            
-        },
-        prevTrack(){
-            if(this.playNumber==null)
-                this.playNumber = this.audioArray.length
-            if(this.playNumber-1<0)
-                this.playNumber=this.audioArray.length -1
-            else
-                this.playNumber =  this.playNumber -1
-            this.$emit("update:emitSongNumber",this.playNumber)
-            this.playAduio()
-        },
+    currentPlay() {
+      // aktualnie odtwarzany -> numer
+      return this.$store.getters.getCurrentPlay;
     },
-    watch:{
-        audioArray(){
-            if(this.currentPlay)
-                this.currentPlay.pause()
-            this.plaing=false
-            this.playNumber=null
-            this.currentPlay=null
-            this.songName="Nie wybrano utworu"
-            this.playPauseImg=`${config.serverAdress}/img/play.svg`
+    playStatus() {
+      // czy gra -> true/false
+      return this.$store.getters.getPlayStatus;
+    },
+    directory() {
+      return this.$store.getters.getDirectory;
+    },
+  },
+  data() {
+    return {
+      config: config,
+      player: null, // zawiera js'owski player muzyki => new Audio
+      songName: "Nie wybrano utworu",
+      minProgress: "", // muzyka w minutach
+      //pasek piosenki
+      widoczny: false,
+      maxRange: null,
+      currentValue: 0,
+    };
+  },
+  methods: {
+    //input
+    inputChanger(e) {
+      console.log("XDD", this.player.currentTime);
+      //inpuciątko
+      this.currentValue = e.target.currentTime;
+      this.maxRange = e.target.duration;
+      //licznik czasu
+      this.minProgress = `${new Date(
+        e.target.currentTime * 1000
+      ).getMinutes()}:${new Date(
+        e.target.currentTime * 1000
+      ).getSeconds()} / ${new Date(
+        this.player.duration * 1000
+      ).getMinutes()}:${new Date(this.player.duration * 1000).getSeconds()}`;
+    },
+    inputHandler(e) {
+      console.log(e.target.value);
+      this.player.currentTime = e.target.value.toString();
+      this.currentValue = e.target.value;
+    },
+    //muzyka
 
+    async playOrPause() {
+      if (this.player == null) {
+        // jeśli nie ma playera
+        if (this.currentPlay == null)
+          // jeśli nie ma odtwaraznego utworu
+          this.$store.commit("setCurrentPlay", 0); // pierwszy
+      } else {
+        if (this.playStatus)
+          // odtwarza
+          this.player.pause();
+        // nie odtwarza
+        else this.player.play();
+      }
+      //długość utworu po załadowaniu
+      this.widoczny = true;
+      if (this.player != null) {
+        this.player.addEventListener("timeupdate", this.inputChanger);
+        this.player.addEventListener("ended", this.nextTrack);
+      }
+      //nazwa utworu
+      this.songName = `Aktualnie odtwarzany : ${
+        this.playArray[this.currentPlay].name
+      } \n z albumu :\n
+      ${this.playArray[this.currentPlay].album}`;
+      this.$store.commit("setPlayStatus"); // zmieniam status
+    },
+    nextTrack() {
+      if (this.currentPlay == this.playArray.length - 1)
+        this.$store.commit("setCurrentPlay", 0);
+      // od początku
+      else {
+        this.$store.commit("setCurrentPlay", this.currentPlay + 1); // pierwszy item
+      }
+    },
+    prevTrack() {
+      if (this.currentPlay == 0 || this.currentPlay == null)
+        this.$store.commit("setCurrentPlay", this.playArray.length - 1);
+      // od początku
+      else {
+        this.$store.commit("setCurrentPlay", this.currentPlay - 1); // pierwszy item
+      }
+    },
+    //store to db
+  },
 
-        },
-        songNumber(){
-            this.playNumber=this.songNumber
-            this.playAduio()
-        },
-    }
-
-})
+  watch: {
+    "$store.state.directory"() {
+      this.$store.dispatch("getMusic");
+      this.$store.commit("resetPlaylist");
+      if (this.player != null) {
+        this.player.pause();
+        this.player.removeEventListener("timeupdate", this.inputChanger);
+        this.player.removeEventListener("ended", this.nextTrack);
+      }
+      this.widoczny = false;
+      this.player = null;
+      this.songName = "Nie wybrano utworu";
+      this.minProgress = "";
+    },
+    currentPlay() {
+      if (this.playStatus) this.$store.commit("setPlayStatus"); // zmieniam status
+      if (this.currentPlay != null) {
+        if (this.player != null) this.player.pause();
+        this.player = new Audio(this.playArray[this.currentPlay].source);
+        this.playOrPause();
+      }
+    },
+    playStatus() {
+      if (this.player)
+        if (this.playStatus) this.player.play();
+        else this.player.pause();
+    },
+  },
+};
 </script>
 
 <style scoped lang="css">
-  @import url('./style/playAudioStyle.css');
-
+@import url("./style/playAudioStyle.css");
 </style>

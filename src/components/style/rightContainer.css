@@ -15,25 +15,22 @@
   overflow-x: hidden;
   overflow-y: scroll;
 }
-.musicContianer div {
-  overflow: hidden;
+.musicContianer table {
+  width: 100%;
 }
 
 .rowContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   min-height: 40px;
   margin-top: 5px;
-  overflow-y: scroll;
 }
-.rowContainer div {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+.rowContainer tr {
   overflow: hidden;
 }
-.rowContainer div span {
+.rowContainer th {
+  border: solid 1px black;
+  overflow: hidden;
+}
+.rowContainer th span {
   display: flex;
   justify-content: baseline;
   margin: 5px;
@@ -43,7 +40,7 @@
   color: #666666;
   align-self: center;
 }
-.rowContainer div img {
+.rowContainer th img {
   visibility: hidden;
   align-self: center;
   width: 20px;
@@ -61,6 +58,11 @@
 }
 .active img, .rowContainer:hover img {
   visibility: visible !important;
+  filter: invert(100%);
+  -webkit-filter: invert(100%);
+}
+.active path, .rowContainer:hover path {
+  color: white;
 }
 
 .rowContainer div:nth-child(2) span {

@@ -1,80 +1,70 @@
 <template>
-    <div class="musicContianer">
-        <h1 v-if="titleArray.status == 'error' ">Podany album nie zawiera utworów</h1>
-        <div v-else :class="[{'active' : item.number == songPlayNbr },'rowContainer']" @click="sendNumber(item.number)" v-for="item in titleArray" :key="item.name">
-            <div> <span>{{item.path}}</span> </div>
-            <div> <span>{{item.name}}</span></div>
-            <div> <span>{{item.size}}.MB</span> </div>
-            <div>            
-                  <img  v-if="songPlayNbr == item.number" :src="config.serverAdress+`/img/pause.svg`"/>
-                  <img v-else :src="config.serverAdress+`/img/play.svg`"/>
-             </div>
-        </div>
-    </div>
+  <div class="musicContianer">
+    <h1 v-if="playArray.status == 'error'">Podany album nie zawiera utworów</h1>
+    <table v-else>
+      <tr
+        :class="[{ active: item.number == currentPlay }, 'rowContainer']"
+        v-for="(item, counter) in playArray"
+        @click="
+          changeSongNumber(counter);
+          playPause();
+        "
+        :key="item.name"
+      >
+        <th>
+          <span>{{ item.path }}</span>
+        </th>
+        <th>
+          <span>{{ item.name }}</span>
+        </th>
+        <th>
+          <span>{{ item.size }}.MB</span>
+        </th>
+        <th>
+          <img
+            v-if="currentPlay == item.number && playStatus"
+            :src="config.serverAdress + `/img/pause.svg`"
+          />
+          <img v-else :src="config.serverAdress + `/img/play.svg`" />
+        </th>
+      </tr>
+    </table>
+  </div>
 </template>
 
 <script>
-import config from "../../config.json"
+import config from "../../config.json";
 export default {
-    name:"songList",
-    props: ['title',"songToEmit","songNumber","songArrayEmit"],
-    data() {
-        return {
-            titleArray: [],
-            config:config,
-            songPlayNbr:this.songNumber
-        }
+  name: "songList",
+  computed: {
+    playArray() {
+      return this.$store.getters.getPlayArray;
     },
-    watch: {
-        title() {
-            console.log(this.title)
-            fetch(config.getMusic, {
-                    method: 'POST', 
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        path: this.title
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    this.titleArray = data
-                    if(data.status!="error"){
-                        this.titleArray.map((item,counter) => {
-                            item.source = encodeURI(this.config.serverAdress + item.source)
-                            item.number = counter
-                            item.cover = this.title
-                            })
-                    }    
-                    
-                    this.sendArray()                
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-        },
-        songNumber(){
-            this.songPlayNbr = this.songNumber
-        }
+    currentPlay() {
+      return this.$store.getters.getCurrentPlay;
     },
-    methods:{
-        sendNumber(name){
-            console.log(name);  
-            this.songPlayNbr = name
-            this.$emit("update:songToEmit",name)
-        },
-        sendArray(){
-            this.$emit("update:songArrayEmit",this.titleArray)
-        },
-        playPause(){
+    playStatus() {
+      return this.$store.getters.getPlayStatus;
+    },
+  },
+  data() {
+    return {
+      config: config,
+    };
+  },
 
-        }
-    }
-}
+  methods: {
+    changeSongNumber(number) {
+      this.$store.commit("setCurrentPlay", number); // pierwszy item
+    },
+    playPause() {
+      console.log("XDDD");
+      this.$store.commit("setPlayStatus");
+    },
+  },
+};
 </script>
 
 <style scoped lang="css">
-  @import url('./style/rightContainer.css');
-
+@import url("./style/rightContainer.css");
 </style>

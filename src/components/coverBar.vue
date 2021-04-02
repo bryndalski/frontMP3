@@ -1,41 +1,27 @@
 <template>
     <div class="coverBarContainer" >
-         <img v-for="item in coversTitleArray" v-on:click="emitCover(item.path)" :key="item.src" :src="config.serverAdress +item.source">
+         <img v-for="item in coverArray" v-on:click="newCover(item.path)" :key="item.src" :src="config.serverAdress +item.source">
     </div>
 </template>
 
 <script>
-import axios from 'axios'
 import config from "../../config.json"
 export default {
     name:"coverBar",
-    props:['toEmit'],
-    created() {
-        axios({
-            url:config.getCovers,
-            method:"GET",
-            headers:{
-                'Content-Type': 'application/json;charset=UTF-8',
-                "Access-Control-Allow-Origin": "*",
-            }
-        })
-        .then(response => {this.coversTitleArray = response.data
-        console.log(response.data)
-        this.emitCover(response.data[0].path)
-        ;})
-        
-        .catch(err => console.log(err))
-    },
-    methods: {
-        emitCover(value) {
-            console.log(value);
-            this.$emit("update:toEmit", value)
-        }
+
+    computed:{ // lepsza inichajlizacja danych => pod zapytania asynchroniczne
+        coverArray(){
+            return this.$store.getters.getCoverArray
+        }  
     },
     data() {
         return {
-            coversTitleArray:[],
             config:config
+        }
+    },
+    methods: {
+        newCover(dir){
+            this.$store.commit("setDirectory", dir)
         }
     },
 }
