@@ -1,19 +1,32 @@
 .rightContainer {
   height: 90vh;
   width: 100%;
+  background-color: #292929;
 }
-.rightContainer h1 {
+.rightContainer div:nth-child(1) {
+  display: flex;
+  align-items: baseline;
+  height: 5vh;
+}
+.rightContainer div:nth-child(1) h1 {
   margin: 0;
   padding: 0;
-  height: 5vh;
   text-align: center;
+  color: #747474;
+}
+.rightContainer div:nth-child(1) img {
+  height: 3vh;
+  margin-left: auto;
+}
+.rightContainer div:nth-child(1) img:hover {
+  cursor: pointer;
 }
 
 .musicContianer {
   width: 100%;
   height: 85vh;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .musicContianer table {
   width: 100%;
@@ -25,15 +38,16 @@
 }
 .rowContainer tr {
   overflow: hidden;
+  margin-top: 5px;
 }
 .rowContainer th {
-  border: solid 1px black;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 .rowContainer th span {
   display: flex;
   justify-content: baseline;
-  margin: 5px;
   overflow: hidden;
   font-size: 15pt;
   font-weight: bold;
@@ -47,19 +61,14 @@
   height: 20px;
 }
 
-.active, .rowContainer:hover {
-  background-color: blue !important;
-}
 .active span, .rowContainer:hover span {
   color: white !important;
 }
 .active div span:nth-child(2), .rowContainer:hover div span:nth-child(2) {
   color: black !important;
 }
-.active img, .rowContainer:hover img {
+.active img:nth-child(1), .rowContainer:hover img:nth-child(1) {
   visibility: visible !important;
-  filter: invert(100%);
-  -webkit-filter: invert(100%);
 }
 .active path, .rowContainer:hover path {
   color: white;

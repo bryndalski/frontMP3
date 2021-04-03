@@ -3,7 +3,14 @@
     <div class="pgContainer">
       <cover-bar-container></cover-bar-container>
       <div class="rightContainer">
-        <h1>MP3 player</h1>
+        <div>
+          <h1>MP3 player</h1>
+          <img
+            v-if="playList.length != 0"
+            :src="config.serverAdress + `/img/playList.svg`"
+            @click="changeStatus()"
+          />
+        </div>
         <song-list></song-list>
       </div>
     </div>
@@ -14,10 +21,10 @@
 </template>
 
 <script>
-// import songList from './components/songList.vue'
 import coverBarContainer from "./components/coverBar.vue";
 import SongList from "./components/songList.vue";
 import playerComponent from "./components/playAudioComponent.vue";
+import config from "../config.json";
 export default {
   name: "App",
   components: {
@@ -25,11 +32,29 @@ export default {
     SongList,
     playerComponent,
   },
+  computed: {
+    playList() {
+      if (
+        this.$store.getters.getPlayList == 0 &&
+        this.$store.getters.getPlayListStatus
+      ) {
+        this.$store.dispatch("getPlayList");
+        this.$store.commit("setPlayListStatus");
+      }
+      return this.$store.getters.getPlayList;
+    },
+  },
   mounted() {
     this.$store.dispatch("getCovers");
+    this.$store.dispatch("getPlayList");
+  },
+  methods: {
+    changeStatus() {
+      this.$store.commit("setPlayListStatus");
+    },
   },
   data() {
-    return {};
+    return { config };
   },
 };
 </script>

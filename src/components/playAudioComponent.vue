@@ -3,7 +3,7 @@
     <div class="title">{{ songName }}</div>
     <div class="controlContainer">
       <input
-        v-show="widoczny"
+        v-if="widoczny"
         type="range"
         :max="maxRange"
         min="0"
@@ -63,25 +63,28 @@ export default {
       return this.$store.getters.getPlayStatus;
     },
     directory() {
+      //ścieżka /album
       return this.$store.getters.getDirectory;
+    },
+    playListStatus() {
+      return this.$store.getters.getPlayListStatus;
     },
   },
   data() {
     return {
-      config: config,
+      config,
       player: null, // zawiera js'owski player muzyki => new Audio
       songName: "Nie wybrano utworu",
       minProgress: "", // muzyka w minutach
       //pasek piosenki
-      widoczny: false,
-      maxRange: null,
-      currentValue: 0,
+      widoczny: false, //widoczność paska progresu piosenki
+      maxRange: null, //maksymalna długość
+      currentValue: 0, //obecna wartość
     };
   },
   methods: {
     //input
     inputChanger(e) {
-      console.log("XDD", this.player.currentTime);
       //inpuciątko
       this.currentValue = e.target.currentTime;
       this.maxRange = e.target.duration;
@@ -95,7 +98,6 @@ export default {
       ).getMinutes()}:${new Date(this.player.duration * 1000).getSeconds()}`;
     },
     inputHandler(e) {
-      console.log(e.target.value);
       this.player.currentTime = e.target.value.toString();
       this.currentValue = e.target.value;
     },
@@ -142,11 +144,8 @@ export default {
         this.$store.commit("setCurrentPlay", this.currentPlay - 1); // pierwszy item
       }
     },
-    //store to db
-  },
-
-  watch: {
-    "$store.state.directory"() {
+    //helper
+    setPlay() {
       this.$store.dispatch("getMusic");
       this.$store.commit("resetPlaylist");
       if (this.player != null) {
@@ -159,6 +158,12 @@ export default {
       this.songName = "Nie wybrano utworu";
       this.minProgress = "";
     },
+  },
+  watch: {
+    "$store.state.directory"() {
+      this.setPlay();
+    },
+    //dodaj watch na opcje playlisty
     currentPlay() {
       if (this.playStatus) this.$store.commit("setPlayStatus"); // zmieniam status
       if (this.currentPlay != null) {
@@ -171,6 +176,26 @@ export default {
       if (this.player)
         if (this.playStatus) this.player.play();
         else this.player.pause();
+    },
+    //nasłuch na status playlista czy nie 
+    "$store.state.playListStatus"() {
+      if (this.playListStatus) {
+        // true => na playlisty
+        this.$store.commit("setMusic", this.$store.getters.getPlayList);
+        this.$store.commit("resetPlaylist");
+        if (this.player != null) {
+          this.player.pause();
+          this.player.removeEventListener("timeupdate", this.inputChanger);
+          this.player.removeEventListener("ended", this.nextTrack);
+        }
+        this.widoczny = false;
+        this.player = null;
+        this.songName = "Nie wybrano utworu";
+        this.minProgress = "";
+      } else {
+        // false na utwory
+        this.setPlay();
+      }
     },
   },
 };

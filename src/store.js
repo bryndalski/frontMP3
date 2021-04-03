@@ -13,6 +13,8 @@ export default new Vuex.Store({
     playStatus: false, // przechowuje czy gra czy nie  false => nie gra true => gra
     playListMode: false, // zmienia odtwarzacz w playlistę z NEDB
     describeText: "",
+    playList: [], //playlista
+    playListStatus: false, // status playlisty służący do zmieniania widoku
   },
   mutations: {
     // update state
@@ -20,33 +22,53 @@ export default new Vuex.Store({
       // ustawiam ścieżke
       state.directory = payload;
     },
-
+    // ustawia albmy [tablice]
     setCoversArray(state, payload) {
-      // ustawia albmy [tablice]
       state.coverArray = payload;
     },
+    // ustawia albym
     setDirectory(state, payload) {
-      // ustawia albym
       state.directory = payload;
     },
+    //ustawia tablce utworów
     setMusic(state, payload) {
-      //ustawia tablce utworów
       state.playArray = payload;
     },
+    //ustawia aktualnie graną
     setCurrentPlay(state, payload) {
-      //ustawia aktualnie graną
       state.currentPlay = payload;
     },
+    // resetuje
     resetPlaylist(state) {
-      // resetuje
       state.currentPlay = null;
       state.playStatus = false;
     },
+    //ustawia status piosenki
     setPlayStatus(state) {
       state.playStatus = state.playStatus ? false : true;
     },
+    //ustawia wyświeltany tekst
     setDisplayText(state, payload) {
       state.describeText = payload;
+    },
+    //nadaję playlistę podczas ładowania
+    setPlaylist(state, payload) {
+      state.playList = payload;
+    },
+    // dodaję do playlisty
+    addToPlayList(state, payload) {
+      state.playList.push(payload);
+    },
+    // usuwa z playlisty
+    removeFromPlayList(state, payload) {
+      state.playList.forEach((item, counter) => {
+        if (JSON.stringify(item) == JSON.stringify(payload))
+          state.playList.splice(counter, 1);
+      });
+    },
+    //zmeinaia status play listy
+    setPlayListStatus(state) {
+      state.playListStatus = state.playListStatus ? false : true;
     },
   },
   actions: {
@@ -60,16 +82,13 @@ export default new Vuex.Store({
           "Content-Type": "application/json;charset=UTF-8",
           "Access-Control-Allow-Origin": "*",
         },
-      })
-        .then((response) => {
-          state.commit("setCoversArray", response.data); //ustawiam tablice okładek
-          state.commit("setDirectory", response.data[0].path); //ustawiam tablice okładek
-        })
-        .catch((err) => console.log(err));
+      }).then((response) => {
+        state.commit("setCoversArray", response.data); //ustawiam tablice okładek
+        state.commit("setDirectory", response.data[0].path); //ustawiam tablice okładek
+      });
     },
     //pobierniae muzyki
     getMusic(state) {
-      console.log(state);
       axios({
         url: config.getMusic,
         method: "POST",
@@ -80,20 +99,40 @@ export default new Vuex.Store({
           "Content-Type": "application/json;charset=UTF-8",
           "Access-Control-Allow-Origin": "*",
         },
-      })
-        .then((response) => {
-          let playArray = response.data;
-          if (response.data.status != "error") {
-            playArray.map((item, counter) => {
-              item.album = item.path; // album
-              item.source = encodeURI(config.serverAdress + item.source);
-              item.number = counter; //numeracja utworu => pomaga jako klucz + wysyłana do odtwarzania
-              item.cover = state.directory; // tytuł
-            });
-          }
-          state.commit("setMusic", playArray);
-        })
-        .catch((err) => console.log(err));
+      }).then((response) => {
+        console.log(response.data);
+        let playArray = response.data;
+        if (response.data.status != "error") {
+          playArray.map((item) => {
+            item.album = item.path; // album
+            item.serverSource = item.source; // tylko do wysłania
+            item.source = encodeURI(config.serverAdress + item.source);
+            // item.cover = state.getters.getDirectory; // tytuł
+          });
+        }
+        state.commit("setMusic", playArray);
+      });
+    },
+    getPlayList(state) {
+      axios({
+        url: config.getPlayList,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+        },
+      }).then((response) => {
+        let playArray = response.data;
+
+        if (response.data.status != "error") {
+          playArray.map((item) => {
+            item.album = item.path; // album
+            item.serverSource = item.source; // tylko do wysłania
+            item.source = encodeURI(config.serverAdress + item.source);
+          });
+          state.commit("setPlaylist", playArray);
+        }
+      });
     },
   },
   getters: {
@@ -103,5 +142,7 @@ export default new Vuex.Store({
     getCurrentPlay: (state) => state.currentPlay, //zwraca aktualną piosenke (numer )
     getPlayStatus: (state) => state.playStatus, // zwraca status true false odtwarzania
     getDescribeText: (state) => state.getDescribeText, // text główny
+    getPlayList: (state) => state.playList, // zwraca dostępną playlistę
+    getPlayListStatus: (state) => state.playListStatus,
   },
 });
