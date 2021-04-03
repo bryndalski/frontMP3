@@ -27,6 +27,13 @@
           />
           <img v-else :src="config.serverAdress + `/img/play.svg`" />
         </th>
+        <th>
+          <img
+            v-if="currentPlay == item.number && playStatus"
+            :src="config.serverAdress + `/img/pause.svg`"
+          />
+          <img v-else :src="config.serverAdress + `/img/play.svg`" />
+        </th>
       </tr>
     </table>
   </div>

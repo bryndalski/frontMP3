@@ -100,7 +100,6 @@ export default {
       this.currentValue = e.target.value;
     },
     //muzyka
-
     async playOrPause() {
       if (this.player == null) {
         // jeśli nie ma playera
