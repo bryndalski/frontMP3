@@ -1,8 +1,8 @@
 {
-  "serverAdress": "http://localhost:5500",
-  "getCovers": "http://localhost:5500/getCovers",
-  "getMusic": "http://localhost:5500/getMusic",
-  "addToPlayList": "http://localhost:5500/addToPlayList",
-  "removeFromPlayList": "http://localhost:5500/removeFromPlayList",
-  "getPlayList": "http://localhost:5500/getPlayList"
+  "serverAdress": "http://localhost:3000",
+  "getCovers": "http://localhost:3000/getCovers",
+  "getMusic": "http://localhost:3000/getMusic",
+  "addToPlayList": "http://localhost:3000/addToPlayList",
+  "removeFromPlayList": "http://localhost:3000/removeFromPlayList",
+  "getPlayList": "http://localhost:3000/getPlayList"
 }

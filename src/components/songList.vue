@@ -81,7 +81,7 @@ export default {
     ifPlayListContains(index) {
       let toReturn = true;
       this.playList.forEach((element) => {
-        if (JSON.stringify(element) == JSON.stringify(index)) toReturn = false;
+        if (element.source == index.source) toReturn = false;
       });
       return toReturn;
     },

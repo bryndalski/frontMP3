@@ -6,6 +6,7 @@
   margin: 0;
   max-width: 250px;
   min-width: 200px;
+  background-color: rgb(36, 36, 36);
   overflow: scroll;
 }
 .coverBarContainer img {

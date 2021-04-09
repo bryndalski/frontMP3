@@ -47,6 +47,7 @@ export default {
   mounted() {
     this.$store.dispatch("getCovers");
     this.$store.dispatch("getPlayList");
+    document.title = "Odtwarzacz MP3";
   },
   methods: {
     changeStatus() {

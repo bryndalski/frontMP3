@@ -89,13 +89,27 @@ export default {
       this.currentValue = e.target.currentTime;
       this.maxRange = e.target.duration;
       //licznik czasu
-      this.minProgress = `${new Date(
-        e.target.currentTime * 1000
-      ).getMinutes()}:${new Date(
-        e.target.currentTime * 1000
-      ).getSeconds()} / ${new Date(
-        this.player.duration * 1000
-      ).getMinutes()}:${new Date(this.player.duration * 1000).getSeconds()}`;
+      let sekundy = 0;
+      let minutu = 0;
+      let maxSekundy = 0;
+      let maxMinuty = 0;
+      // aktualny czas
+      if (new Date(e.target.currentTime * 1000).getSeconds() < 10)
+        sekundy = `0${new Date(e.target.currentTime * 1000).getSeconds()}`;
+      else sekundy = new Date(e.target.currentTime * 1000).getSeconds();
+      //minuty
+      if (new Date(e.target.currentTime * 1000).getMinutes() < 10)
+        minutu = `0${new Date(e.target.currentTime * 1000).getMinutes()}`;
+      else minutu = new Date(e.target.currentTime * 1000).getMinutes();
+      // minuty
+      if (new Date(this.player.duration * 1000).getMinutes() < 10)
+        maxMinuty = `0${new Date(this.player.duration * 1000).getMinutes()}`;
+      else maxMinuty = new Date(this.player.duration * 1000).getMinutes();
+      //sekundy
+      if (new Date(this.player.duration * 1000).getSeconds() < 10)
+        maxSekundy = `0${new Date(this.player.duration * 1000).getSeconds()}`;
+      else maxSekundy = new Date(this.player.duration * 1000).getSeconds();
+      this.minProgress = `${minutu}:${sekundy} /${maxMinuty}:${maxSekundy}`;
     },
     inputHandler(e) {
       this.player.currentTime = e.target.value.toString();
@@ -129,12 +143,22 @@ export default {
       this.$store.commit("setPlayStatus"); // zmieniam status
     },
     nextTrack() {
-      if (this.currentPlay == this.playArray.length - 1)
+      if (this.playArray.length == 1) {
         this.$store.commit("setCurrentPlay", 0);
-      // od początku
-      else {
-        this.$store.commit("setCurrentPlay", this.currentPlay + 1); // pierwszy item
+        if (this.player) {
+          // can not be null
+          this.player.loop = true;
+          this.player.currentTime = 0;
+          this.player.play();
+        }
       }
+      if (this.playArray.length != 1)
+        if (this.currentPlay == this.playArray.length - 1)
+          this.$store.commit("setCurrentPlay", 0);
+        // od początku
+        else {
+          this.$store.commit("setCurrentPlay", this.currentPlay + 1); // pierwszy item
+        }
     },
     prevTrack() {
       if (this.currentPlay == 0 || this.currentPlay == null)
@@ -177,7 +201,7 @@ export default {
         if (this.playStatus) this.player.play();
         else this.player.pause();
     },
-    //nasłuch na status playlista czy nie 
+    //nasłuch na status playlista czy nie
     "$store.state.playListStatus"() {
       if (this.playListStatus) {
         // true => na playlisty
