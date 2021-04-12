@@ -43,7 +43,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import config from "../../config.json";
 
@@ -117,41 +116,46 @@ export default {
     },
     //muzyka
     async playOrPause() {
-      if (this.player == null) {
-        // jeśli nie ma playera
-        if (this.currentPlay == null)
-          // jeśli nie ma odtwaraznego utworu
-          this.$store.commit("setCurrentPlay", 0); // pierwszy
-      } else {
-        if (this.playStatus)
-          // odtwarza
-          this.player.pause();
-        // nie odtwarza
-        else this.player.play();
-      }
-      //długość utworu po załadowaniu
-      this.widoczny = true;
-      if (this.player != null) {
-        this.player.addEventListener("timeupdate", this.inputChanger);
-        this.player.addEventListener("ended", this.nextTrack);
-      }
-      //nazwa utworu
-      this.songName = `Aktualnie odtwarzany : ${
-        this.playArray[this.currentPlay].name
-      } \n z albumu :\n
+      if (this.playArray.length != undefined) {
+        if (this.player == null) {
+          //! tutaj na pustą tablice
+          // jeśli nie ma playera
+          if (this.currentPlay == null)
+            // jeśli nie ma odtwaraznego utworu
+            this.$store.commit("setCurrentPlay", 0); // pierwszy
+        } else {
+          if (this.playStatus)
+            // odtwarza
+            this.player.pause();
+          // nie odtwarza
+          else this.player.play();
+        }
+        //długość utworu po załadowaniu
+        this.widoczny = true;
+        if (this.player != null) {
+          this.player.addEventListener("timeupdate", this.inputChanger);
+          this.player.addEventListener("ended", this.nextTrack);
+        }
+        //nazwa utworu
+        this.songName = `Aktualnie odtwarzany : ${
+          this.playArray[this.currentPlay].name
+        } \n z albumu :\n
       ${this.playArray[this.currentPlay].album}`;
-      this.$store.commit("setPlayStatus"); // zmieniam status
+        this.$store.commit("setPlayStatus"); // zmieniam status
+      }
     },
     nextTrack() {
-      if (this.playArray.length == 1) {
-        this.$store.commit("setCurrentPlay", 0);
-        if (this.player) {
-          // can not be null
-          this.player.loop = true;
-          this.player.currentTime = 0;
-          this.player.play();
+      if (this.playArray.length != undefined)
+        if (this.playArray.length == 1) {
+          //!
+          this.$store.commit("setCurrentPlay", 0);
+          if (this.player) {
+            // can not be null
+            this.player.loop = true;
+            this.player.currentTime = 0;
+            this.player.play();
+          }
         }
-      }
       if (this.playArray.length != 1)
         if (this.currentPlay == this.playArray.length - 1)
           this.$store.commit("setCurrentPlay", 0);
@@ -161,12 +165,14 @@ export default {
         }
     },
     prevTrack() {
-      if (this.currentPlay == 0 || this.currentPlay == null)
-        this.$store.commit("setCurrentPlay", this.playArray.length - 1);
-      // od początku
-      else {
-        this.$store.commit("setCurrentPlay", this.currentPlay - 1); // pierwszy item
-      }
+      if (this.playArray.length != undefined)
+        if (this.currentPlay == 0 || this.currentPlay == null)
+          //!
+          this.$store.commit("setCurrentPlay", this.playArray.length - 1);
+        // od początku
+        else {
+          this.$store.commit("setCurrentPlay", this.currentPlay - 1); // pierwszy item
+        }
     },
     //helper
     setPlay() {
@@ -189,11 +195,13 @@ export default {
     },
     //dodaj watch na opcje playlisty
     currentPlay() {
-      if (this.playStatus) this.$store.commit("setPlayStatus"); // zmieniam status
-      if (this.currentPlay != null) {
-        if (this.player != null) this.player.pause();
-        this.player = new Audio(this.playArray[this.currentPlay].source);
-        this.playOrPause();
+      if (this.playArray.length != undefined) {
+        if (this.playStatus) this.$store.commit("setPlayStatus"); // zmieniam status
+        if (this.currentPlay != null) {
+          if (this.player != null) this.player.pause();
+          this.player = new Audio(this.playArray[this.currentPlay].source);
+          this.playOrPause();
+        }
       }
     },
     playStatus() {
