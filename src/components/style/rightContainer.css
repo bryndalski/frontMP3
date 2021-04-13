@@ -31,6 +31,10 @@
 .musicContianer table {
   width: 100%;
 }
+.musicContianer h1 {
+  color: #a83838;
+  text-align: center;
+}
 
 .rowContainer {
   min-height: 40px;

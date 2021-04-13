@@ -100,7 +100,6 @@ export default new Vuex.Store({
           "Access-Control-Allow-Origin": "*",
         },
       }).then((response) => {
-        console.log(response.data);
         let playArray = response.data;
         if (response.data.status != "error") {
           playArray.map((item) => {
