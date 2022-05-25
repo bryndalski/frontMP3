@@ -1,8 +1,8 @@
 {
-  "serverAdress": "http://localhost:3000",
-  "getCovers": "http://localhost:3000/getCovers",
-  "getMusic": "http://localhost:3000/getMusic",
-  "addToPlayList": "http://localhost:3000/addToPlayList",
-  "removeFromPlayList": "http://localhost:3000/removeFromPlayList",
-  "getPlayList": "http://localhost:3000/getPlayList"
+  "serverAdress": "https://mp3vueback.herokuapp.com",
+  "getCovers": "https://mp3vueback.herokuapp.com/getCovers",
+  "getMusic": "https://mp3vueback.herokuapp.com/getMusic",
+  "addToPlayList": "https://mp3vueback.herokuapp.com/addToPlayList",
+  "removeFromPlayList": "https://mp3vueback.herokuapp.com/removeFromPlayList",
+  "getPlayList": "https://mp3vueback.herokuapp.com/getPlayList"
 }
